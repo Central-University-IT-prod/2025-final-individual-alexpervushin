@@ -1,0 +1,41 @@
+services:
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    depends_on:
+      - postgres-test
+      - redis-test
+    environment:
+      - DATABASE_HOST=postgres-test
+      - DATABASE_PORT=5432
+      - DATABASE_USER=test
+      - DATABASE_PASSWORD=test
+      - DATABASE_DB_NAME=test_db
+      - REDIS_HOST=redis-test
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
+      - TELEGRAM_BOT_TOKEN=test_token
+      - AI_API_KEY=REDACTED
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_BUCKET_NAME=images
+      - MINIO_PUBLIC_HOST=localhost:9000
+      - MINIO_ACCESS_KEY=test_access_key
+      - MINIO_SECRET_KEY=test_secret_key
+      - YANDEX_TOKEN=test_yandex_token
+      - CLOUDFLARE_API_TOKEN=test_cloudflare_token
+      - CLOUDFLARE_ACCOUNT_ID=test_account_id
+
+  postgres-test:
+    image: postgres:16.6
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=test_db
+    ports:
+      - '5432:5432'
+
+  redis-test:
+    image: redis:7.4
+    ports:
+      - '6379:6379'

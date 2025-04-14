@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в систему</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+    <div class="lottie-container">
+        <img src="/images/Picture2.png" alt="Lottie character" class="lottie-character">
+        <div class="hint-text">погладь меня</div>
+        <div class="prod-text">PROD</div>
+    </div>
+    <div class="welcome-container">
+        <h1>Вход в систему</h1>
+        <form class="login-form" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <input type="text" id="uuid" name="uuid" placeholder="Введите ваш UUID" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Войти</button>
+            <a href="/web/advertisers/index" class="back-link">Назад</a>
+        </form>
+    </div>
+
+    <script>
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            const uuid = document.getElementById('uuid').value;
+
+            try {
+                const response = await fetch(`/advertisers/${uuid}`, {
+                    method: 'GET',
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('advertiser_id', data.advertiser_id);
+                    window.location.href = '/web/advertisers/dashboard';
+                } else {
+                    alert('Неверный UUID. Пожалуйста, проверьте введенные данные.');
+                }
+            } catch (error) {
+                console.error('Ошибка при входе:', error);
+                alert('Произошла ошибка при входе. Пожалуйста, попробуйте снова.');
+            }
+        }
+    </script>
+</body>
+
+</html>

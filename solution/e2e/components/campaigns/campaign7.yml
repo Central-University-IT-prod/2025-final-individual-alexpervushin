@@ -1,0 +1,10 @@
+cost_per_impression: 31.3
+cost_per_click: 47.9
+ad_title: Рив Гош - территория красоты
+ad_text: Премиальная косметика и парфюмерия. Эксклюзивные бренды и персональные предложения!
+targeting:
+  location: Парк Зарядье
+impressions_limit: 16
+clicks_limit: 8
+start_date: 0
+end_date: 6

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать новую кампанию</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body {
+            background-color: var(--color-dark-green);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .create-campaign-container {
+            padding: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            color: var(--color-white);
+            width: 100%;
+        }
+
+        .create-campaign-title {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-family: var(--tui-font-heading);
+            font-size: 32px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-yellow);
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-family: var(--tui-font-heading);
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: var(--color-white);
+            letter-spacing: 0.5px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 0.75rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-size: 13px;
+            font-family: var(--tui-font-text);
+            color: var(--color-gray-medium);
+            letter-spacing: 0.3px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-white);
+            font-size: 14px;
+            font-family: var(--tui-font-text);
+            height: 38px;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: 2px solid var(--color-yellow);
+            outline-offset: -2px;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+            height: auto;
+        }
+
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23333333' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            padding-right: 2rem;
+            background-color: var(--color-white);
+            color: var(--color-dark-green);
+        }
+
+        .form-group select option {
+            background-color: var(--color-white);
+            color: var(--color-dark-green);
+            padding: 8px;
+        }
+
+        .form-group select:focus {
+            outline: 2px solid var(--color-yellow);
+            outline-offset: -2px;
+            background-color: var(--color-white);
+            color: var(--color-dark-green);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-back {
+            padding: 8px 24px;
+            background: transparent;
+            color: var(--color-white);
+            border: 2px solid var(--color-white);
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: var(--tui-font-text);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            height: 38px;
+            min-width: 120px;
+        }
+
+        .btn-back:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 8px 24px;
+            background: black;
+            color: var(--color-white);
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: var(--tui-font-text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            height: 38px;
+        }
+
+        .btn-generate:hover {
+            background-color: #333;
+            transform: translateY(-2px);
+        }
+
+        .btn-create {
+            min-width: 200px;
+            padding: 8px 24px;
+            background: var(--color-yellow);
+            color: var(--color-dark-green);
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: var(--tui-font-text);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            height: 38px;
+        }
+
+        .btn-create:hover {
+            background-color: var(--color-white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .ad-content-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .ad-content-grid .form-group:nth-child(1) {
+            grid-column: 1 / -1;
+        }
+
+        .ad-content-grid .form-group:nth-child(2) {
+            grid-column: 1;
+        }
+
+        .ad-content-grid .btn-generate {
+            grid-column: 2;
+            width: auto;
+            align-self: center;
+            white-space: nowrap;
+            background: var(--color-white);
+            color: var(--color-dark-green);
+            font-weight: 500;
+            padding: 8px 16px;
+            margin-bottom: 0;
+        }
+
+        .ad-content-grid .btn-generate:hover {
+            background-color: var(--color-gray-lighter);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 4px;
+            color: white;
+            font-size: 14px;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+
+        .notification.error {
+            background-color: #ff4444;
+            box-shadow: 0 4px 8px rgba(255, 68, 68, 0.2);
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="create-campaign-container">
+        <h1 class="create-campaign-title">Создать новую кампанию</h1>
+
+        <form id="campaignForm">
+            <div class="form-section">
+                <h2 class="section-title">Общая информация</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="impressionsLimit">Лимит показов</label>
+                        <input id="impressionsLimit" name="impressionsLimit">
+                    </div>
+                    <div class="form-group">
+                        <label for="clicksLimit">Лимит кликов</label>
+                        <input id="clicksLimit" name="clicksLimit">
+                    </div>
+                    <div class="form-group">
+                        <label for="costPerImpression">Цена за показ</label>
+                        <input id="costPerImpression" name="costPerImpression">
+                    </div>
+                    <div class="form-group">
+                        <label for="costPerClick">Цена за клик</label>
+                        <input id="costPerClick" name="costPerClick">
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Дата начала (номер дня)</label>
+                        <input id="startDate" name="startDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">Дата окончания (номер дня)</label>
+                        <input id="endDate" name="endDate">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="section-title">Таргетинг</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="gender">Пол</label>
+                        <select id="gender" name="gender">
+                            <option value="">Выберите пол</option>
+                            <option value="male">Мужской</option>
+                            <option value="female">Женский</option>
+                            <option value="all">Все</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Местоположение</label>
+                        <input type="text" id="location" name="location">
+                    </div>
+                    <div class="form-group">
+                        <label for="ageFrom">Возраст от</label>
+                        <input id="ageFrom" name="ageFrom">
+                    </div>
+                    <div class="form-group">
+                        <label for="ageTo">Возраст до</label>
+                        <input id="ageTo" name="ageTo">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="section-title">Содержание рекламы</h2>
+                <div class="ad-content-grid">
+                    <div class="form-group">
+                        <label for="adTitle">Заголовок рекламы</label>
+                        <input id="adTitle" name="adTitle">
+                    </div>
+                    <div class="form-group">
+                        <label for="adText">Текст рекламы</label>
+                        <textarea id="adText" name="adText"></textarea>
+                    </div>
+                    <button type="button" class="btn-generate">Сгенерировать с помощью ИИ</button>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn-back" onclick="window.history.back()">Назад</button>
+                <button type="submit" class="btn-create">Создать кампанию</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('campaignForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = {
+                impressions_limit: parseInt(document.getElementById('impressionsLimit').value),
+                clicks_limit: parseInt(document.getElementById('clicksLimit').value),
+                cost_per_impression: parseFloat(document.getElementById('costPerImpression').value),
+                cost_per_click: parseFloat(document.getElementById('costPerClick').value),
+                ad_title: document.getElementById('adTitle').value,
+                ad_text: document.getElementById('adText').value,
+                start_date: parseInt(document.getElementById('startDate').value),
+                end_date: parseInt(document.getElementById('endDate').value),
+                targeting: {}
+            };
+
+            const gender = document.getElementById('gender').value;
+            const ageFrom = document.getElementById('ageFrom').value;
+            const ageTo = document.getElementById('ageTo').value;
+            const location = document.getElementById('location').value;
+
+            if (gender) formData.targeting.gender = gender.toUpperCase();
+            if (ageFrom) formData.targeting.age_from = parseInt(ageFrom);
+            if (ageTo) formData.targeting.age_to = parseInt(ageTo);
+            if (location) formData.targeting.location = location;
+
+            if (Object.keys(formData.targeting).length === 0) {
+                delete formData.targeting;
+            }
+
+            try {
+                const advertiserId = localStorage.getItem('advertiser_id');
+
+                if (!advertiserId) {
+                    window.location.href = '/';
+                    return;
+                }
+
+                const response = await fetch(`/advertisers/${advertiserId}/campaigns`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'accept': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    window.location.href = '/web/advertisers/dashboard';
+                } else {
+                    const errorData = await response.json();
+                    alert('Ошибка при создании кампании: ' + (errorData.detail || 'Проверьте правильность введенных данных'));
+                }
+            } catch (error) {
+                alert('Произошла ошибка при отправке данных: ' + error.message);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const advertiserId = localStorage.getItem('advertiser_id');
+            if (!advertiserId) {
+                window.location.href = '/';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/advertisers/${advertiserId}`, {
+                    method: 'GET',
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    window.location.href = '/';
+                }
+            } catch (error) {
+                console.error('Ошибка при проверке авторизации:', error);
+                window.location.href = '/';
+            }
+        });
+
+        document.querySelector('.btn-generate').addEventListener('click', async function () {
+            const adTitle = document.getElementById('adTitle').value;
+
+            if (!adTitle) {
+                alert('Пожалуйста, сначала введите заголовок рекламы');
+                return;
+            }
+
+            try {
+                const advertiserId = localStorage.getItem('advertiser_id');
+                if (!advertiserId) {
+                    window.location.href = '/';
+                    return;
+                }
+
+                const response = await fetch(`/generate-ad?advertiser_id=${advertiserId}&ad_title=${encodeURIComponent(adTitle)}`, {
+                    method: 'GET',
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('adText').value = data.generated_text;
+                } else {
+                    alert('Ошибка при генерации текста рекламы');
+                }
+            } catch (error) {
+                alert('Произошла ошибка при генерации текста: ' + error.message);
+            }
+        });
+    </script>
+</body>
+
+</html>

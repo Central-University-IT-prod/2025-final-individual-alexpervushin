@@ -1,0 +1,12 @@
+cost_per_impression: 29.8
+cost_per_click: 48.5
+ad_title: Магнит - семейный магазин
+ad_text: Широкий выбор продуктов по доступным ценам. Специальные предложения каждую неделю!
+targeting:
+  location: Парк Горького
+  age_from: 20
+  gender: ALL
+impressions_limit: 30
+clicks_limit: 15
+start_date: 1
+end_date: 8 

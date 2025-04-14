@@ -1,0 +1,43 @@
+test_name: Обновление рекламодателей
+
+stages:
+  - name: 'Получение всех рекламодателей до обновления'
+    request:
+      url: '{BASE_URL}/advertisers/bulk'
+      method: POST
+      json:
+        - !include components/advertisers/advertiser4.yml
+        - !include components/advertisers/advertiser5.yml
+    response:
+      status_code: 201
+      json:
+        - !include components/advertisers/advertiser4.yml
+        - !include components/advertisers/advertiser5.yml
+
+  - name: 'Обновление всех рекламодателей'
+    request:
+      url: '{BASE_URL}/advertisers/bulk'
+      method: POST
+      json:
+        - !include components/advertisers/advertiser4.yml
+        - !include components/advertisers/advertiser5.yml
+    response:
+      status_code: 201
+
+
+  - name: 'Проверка обновления рекламодателя №4'
+    request:
+      url: '{BASE_URL}/advertisers/ea4ce390-89bc-4e7d-bde6-2538933dd68e'
+      method: GET
+    response:
+      status_code: 200
+      json: !include components/advertisers/advertiser4.yml
+
+  - name: 'Проверка обновления рекламодателя №5'
+    request:
+      url: '{BASE_URL}/advertisers/68adeaac-86a9-4e46-9ec7-03e6ef799182'
+      method: GET
+    response:
+      status_code: 200
+      json: !include components/advertisers/advertiser5.yml
+

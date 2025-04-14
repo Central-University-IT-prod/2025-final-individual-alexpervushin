@@ -1,0 +1,11 @@
+cost_per_impression: 42.5
+cost_per_click: 63.8
+ad_title: Эльдорадо - территория низких цен!
+ad_text: Смартфоны и планшеты по суперценам. Кэшбэк до 30%!
+targeting:
+  location: Киевский вокзал
+  age_from: 18
+impressions_limit: 28
+clicks_limit: 14
+start_date: 1
+end_date: 9

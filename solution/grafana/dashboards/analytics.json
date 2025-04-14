@@ -1,0 +1,236 @@
+{
+    "id": null,
+    "uid": "analytics-dashboard",
+    "title": "Показатели",
+    "timezone": "browser",
+    "panels": [
+        {
+            "title": "Количество показов по дням",
+            "type": "timeseries",
+            "datasource": "PostgreSQL",
+            "targets": [
+                {
+                    "rawSql": "SELECT to_timestamp(date) AS time, COUNT(*) AS impressions FROM unique_events WHERE event_type = 'impression' GROUP BY time ORDER BY time ASC;",
+                    "format": "time_series",
+                    "refId": "A"
+                },
+                {
+                    "rawSql": "SELECT c.ad_title as metric, COUNT(ue.*) as value FROM campaigns c JOIN unique_events ue ON c.id = ue.campaign_id WHERE ue.event_type = 'impression' GROUP BY c.ad_title ORDER BY value DESC LIMIT 5;",
+                    "format": "table",
+                    "refId": "B"
+                }
+            ],
+            "gridPos": {
+                "x": 0,
+                "y": 0,
+                "w": 12,
+                "h": 8
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            }
+        },
+        {
+            "title": "Конверсия кликов по кампаниям (топ 10)",
+            "type": "barchart",
+            "datasource": "PostgreSQL",
+            "targets": [
+                {
+                    "rawSql": "WITH campaign_stats AS (SELECT c.ad_title, COUNT(CASE WHEN ue.event_type = 'click' THEN 1 END) as clicks, COUNT(CASE WHEN ue.event_type = 'impression' THEN 1 END) as impressions FROM campaigns c LEFT JOIN unique_events ue ON c.id = ue.campaign_id GROUP BY c.ad_title) SELECT ad_title as campaign, CAST(CAST(clicks AS FLOAT) / NULLIF(impressions, 0) * 100 AS DECIMAL(10,2)) as ctr FROM campaign_stats ORDER BY ctr DESC LIMIT 10;",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "gridPos": {
+                "x": 12,
+                "y": 0,
+                "w": 12,
+                "h": 8
+            }
+        },
+        {
+            "title": "Распределение пользователей по возрасту",
+            "type": "piechart",
+            "datasource": "PostgreSQL",
+            "targets": [
+                {
+                    "rawSql": "WITH age_groups AS (SELECT CASE WHEN age < 18 THEN '<18' WHEN age BETWEEN 18 AND 24 THEN '18-24' WHEN age BETWEEN 25 AND 34 THEN '25-34' WHEN age BETWEEN 35 AND 44 THEN '35-44' ELSE '45+' END as age_group FROM clients) SELECT age_group as label, COUNT(*) as value FROM age_groups GROUP BY age_group ORDER BY age_group;",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "options": {
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "showLegend": true,
+                    "values": [
+                        "value",
+                        "percent"
+                    ]
+                },
+                "pieType": "pie",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        }
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "x": 0,
+                "y": 8,
+                "w": 8,
+                "h": 8
+            }
+        },
+        {
+            "title": "Средний рейтинг по рекламным кампаниям",
+            "type": "gauge",
+            "datasource": "PostgreSQL",
+            "targets": [
+                {
+                    "rawSql": "SELECT c.ad_title as metric, CAST(AVG(ue.rating) AS DECIMAL(10,2)) as value FROM campaigns c JOIN unique_events ue ON c.id = ue.campaign_id WHERE ue.rating IS NOT NULL GROUP BY c.ad_title ORDER BY value DESC;",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "gridPos": {
+                "x": 8,
+                "y": 8,
+                "w": 8,
+                "h": 8
+            },
+            "options": {
+                "min": 1,
+                "max": 5,
+                "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                        {
+                            "color": "red",
+                            "value": null
+                        },
+                        {
+                            "color": "orange",
+                            "value": 2
+                        },
+                        {
+                            "color": "yellow",
+                            "value": 3
+                        },
+                        {
+                            "color": "green",
+                            "value": 4
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "title": "География пользователей",
+            "type": "table",
+            "datasource": "PostgreSQL",
+            "targets": [
+                {
+                    "rawSql": "SELECT location, COUNT(*) as users_count, COUNT(DISTINCT ue.campaign_id) as campaigns_interacted FROM clients c LEFT JOIN unique_events ue ON c.id = ue.client_id GROUP BY location ORDER BY users_count DESC;",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "gridPos": {
+                "x": 16,
+                "y": 8,
+                "w": 8,
+                "h": 8
+            }
+        },
+        {
+            "title": "Активность по времени суток",
+            "type": "barchart",
+            "datasource": "PostgreSQL",
+            "targets": [
+                {
+                    "rawSql": "SELECT EXTRACT(HOUR FROM to_timestamp(date)) as hour, COUNT(*) as count FROM unique_events GROUP BY hour ORDER BY hour ASC;",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "options": {
+                "showValue": "auto",
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                },
+                "orientation": "vertical",
+                "xField": "hour",
+                "colorByField": "hour",
+                "text": {
+                    "valueSize": 12
+                },
+                "barWidth": 0.8
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "continuous-BlYlRd"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "hour"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "hour"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "x": 0,
+                "y": 16,
+                "w": 24,
+                "h": 8
+            }
+        }
+    ]
+}

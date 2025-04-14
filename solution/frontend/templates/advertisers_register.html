@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+    <div class="lottie-container">
+        <img src="/images/Picture2.png" alt="Lottie character" class="lottie-character">
+        <div class="hint-text">погладь меня</div>
+        <div class="prod-text">PROD</div>
+    </div>
+    <div class="welcome-container">
+        <h1>Регистрация</h1>
+        <form class="login-form" onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <input type="text" id="name" name="name" placeholder="Введите ваше имя" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+            <a href="/web/advertisers/index" class="back-link">Назад</a>
+        </form>
+    </div>
+
+    <script>
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0,
+                    v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const uuid = generateUUID();
+
+            try {
+                const response = await fetch('/advertisers/bulk', {
+                    method: 'POST',
+                    headers: {
+                        'accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify([{
+                        advertiser_id: uuid,
+                        name: name
+                    }])
+                });
+
+                if (response.ok) {
+                    localStorage.setItem('advertiser_id', uuid);
+                    window.location.href = '/web/advertisers/dashboard';
+                } else {
+                    alert('Ошибка при регистрации. Пожалуйста, попробуйте снова.');
+                }
+            } catch (error) {
+                console.error('Ошибка при регистрации:', error);
+                alert('Произошла ошибка при регистрации. Пожалуйста, попробуйте снова.');
+            }
+        }
+    </script>
+</body>
+
+</html>

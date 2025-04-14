@@ -1,0 +1,101 @@
+test_name: Проверка веб-эндпоинтов
+
+stages:
+  - name: 'Проверка главной страницы'
+    request:
+      url: '{BASE_URL}/web/'
+      method: GET
+    response:
+      status_code: 200
+
+  - name: 'Проверка страницы списка рекламодателей'
+    request:
+      url: '{BASE_URL}/web/advertisers/index'
+      method: GET
+    response:
+      status_code: 200
+
+  - name: 'Проверка страницы входа рекламодателя'
+    request:
+      url: '{BASE_URL}/web/advertisers/login'
+      method: GET
+    response:
+      status_code: 200
+
+  - name: 'Проверка страницы регистрации рекламодателя'
+    request:
+      url: '{BASE_URL}/web/advertisers/register'
+      method: GET
+    response:
+      status_code: 200
+
+  - name: 'Проверка дашборда рекламодателя'
+    request:
+      url: '{BASE_URL}/web/advertisers/dashboard'
+      method: GET
+    response:
+      status_code: 200
+
+  - name: 'Проверка страницы профиля рекламодателя'
+    request:
+      url: '{BASE_URL}/web/advertisers/profile'
+      method: GET
+    response:
+      status_code: 200
+
+  - name: 'Проверка страницы создания кампании'
+    request:
+      url: '{BASE_URL}/web/advertisers/create'
+      method: GET
+    response:
+      status_code: 200
+
+  - name: 'Проверка страницы модерации'
+    request:
+      url: '{BASE_URL}/web/advertisers/moderation'
+      method: GET
+    response:
+      status_code: 200
+
+  - name: 'Проверка страницы ML-скоринга'
+    request:
+      url: '{BASE_URL}/web/advertisers/ml-score'
+      method: GET
+    response:
+      status_code: 200
+
+  - name: 'Проверка страницы кампании'
+    request:
+      url: '{BASE_URL}/web/advertisers/campaign/ea4ce390-89bc-4e7d-bde6-2538933dd68e'
+      method: GET
+    response:
+      status_code: 200
+
+  # Клиентские веб-страницы
+  - name: 'Проверка страницы списка клиентов'
+    request:
+      url: '{BASE_URL}/web/clients/index'
+      method: GET
+    response:
+      status_code: 200
+
+  - name: 'Проверка страницы входа клиента'
+    request:
+      url: '{BASE_URL}/web/clients/login'
+      method: GET
+    response:
+      status_code: 200
+
+  - name: 'Проверка страницы регистрации клиента'
+    request:
+      url: '{BASE_URL}/web/clients/register'
+      method: GET
+    response:
+      status_code: 200
+
+  - name: 'Проверка дашборда клиента'
+    request:
+      url: '{BASE_URL}/web/clients/dashboard'
+      method: GET
+    response:
+      status_code: 200 

@@ -1,0 +1,97 @@
+test_name: Создание рекламных кампаний
+
+stages:
+  - name: 'Создание рекламодателей №1, №2, №3'
+    request:
+      url: '{BASE_URL}/advertisers/bulk'
+      method: POST
+      json:
+        - !include components/advertisers/advertiser1.yml
+        - !include components/advertisers/advertiser2.yml
+        - !include components/advertisers/advertiser3.yml
+    response:
+      status_code: 201
+      json:
+        - !include components/advertisers/advertiser1.yml
+        - !include components/advertisers/advertiser2.yml
+        - !include components/advertisers/advertiser3.yml
+
+  - name: 'Создание рекламной кампании для рекламодателя №1'
+    request:
+      url: '{BASE_URL}/advertisers/e14e523e-7bc0-4340-b096-22b669b49a20/campaigns'
+      method: POST
+      json: !include components/campaigns/campaign1.yml
+    response:
+      status_code: 201
+      save:
+        json:
+          sportmaster_campaign_id: campaign_id
+
+  - name: 'Проверка созданной кампании для рекламодателя №1'
+    request:
+      url: '{BASE_URL}/advertisers/e14e523e-7bc0-4340-b096-22b669b49a20/campaigns/{sportmaster_campaign_id}'
+      method: GET
+    response:
+      status_code: 200
+
+  # Тесты для DNS (advertiser2)
+  - name: 'Создание рекламной кампании для рекламодателя №2'
+    request:
+      url: '{BASE_URL}/advertisers/b0f9c106-4ec7-4129-a423-8d4334084f60/campaigns'
+      method: POST
+      json: !include components/campaigns/campaign2.yml
+    response:
+      status_code: 201
+      save:
+        json:
+          dns_campaign_id: campaign_id
+
+  - name: 'Проверка созданной кампании для рекламодателя №2'
+    request:
+      url: '{BASE_URL}/advertisers/b0f9c106-4ec7-4129-a423-8d4334084f60/campaigns/{dns_campaign_id}'
+      method: GET
+    response:
+      status_code: 200
+
+  # Тесты для М.Видео (advertiser3)
+  - name: 'Создание рекламной кампании для рекламодателя №3'
+    request:
+      url: '{BASE_URL}/advertisers/556d2f15-2a23-4d34-9f62-d28b2fa62817/campaigns'
+      method: POST
+      json: !include components/campaigns/campaign3.yml
+    response:
+      status_code: 201
+      save:
+        json:
+          mvideo_campaign_id: campaign_id
+
+  - name: 'Проверка созданной кампании для рекламодателя №3'
+    request:
+      url: '{BASE_URL}/advertisers/556d2f15-2a23-4d34-9f62-d28b2fa62817/campaigns/{mvideo_campaign_id}'
+      method: GET
+    response:
+      status_code: 200
+
+
+  # Проверка доступа к чужим кампаниям
+  - name: 'Попытка получения кампании рекламодателя №1 рекламодателем №2'
+    request:
+      url: '{BASE_URL}/advertisers/b0f9c106-4ec7-4129-a423-8d4334084f60/campaigns/{sportmaster_campaign_id}'
+      method: GET
+    response:
+      status_code: 403
+
+  # Проверка удаления кампании
+  - name: 'Удаление рекламной кампании для рекламодателя №1'
+    request:
+      url: '{BASE_URL}/advertisers/e14e523e-7bc0-4340-b096-22b669b49a20/campaigns/{sportmaster_campaign_id}'
+      method: DELETE
+    response:
+      status_code: 204
+
+  - name: 'Проверка удаленной кампании для рекламодателя №1'
+    request:
+      url: '{BASE_URL}/advertisers/e14e523e-7bc0-4340-b096-22b669b49a20/campaigns/{sportmaster_campaign_id}'
+      method: GET
+    response:
+      status_code: 404

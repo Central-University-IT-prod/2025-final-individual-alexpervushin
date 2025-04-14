@@ -1,0 +1,30 @@
+[project]
+name = "alexpervushin"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aiogram>=3.18.0",
+    "aiogram-dialog>=2.3.1",
+    "aiohttp>=3.11.12",
+    "aiosqlite>=0.21.0",
+    "asyncpg>=0.30.0",
+    "fastapi>=0.115.8",
+    "httpx>=0.28.1",
+    "minio>=7.2.15",
+    "prometheus-fastapi-instrumentator>=7.0.2",
+    "pydantic>=2.10.6",
+    "pydantic-settings>=2.7.1",
+    "pytest-asyncio>=0.25.3",
+    "pytest-cov>=6.0.0",
+    "pytest-mock>=3.14.0",
+    "python-multipart>=0.0.20",
+    "redis>=5.2.1",
+    "sqlalchemy>=2.0.38",
+    "uvicorn>=0.34.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "strict"
+asyncio_default_fixture_loop_scope = "function"

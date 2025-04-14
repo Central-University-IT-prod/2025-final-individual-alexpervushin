@@ -1,0 +1,76 @@
+test_name: Обновление ml скора рекламодателей и клиентов
+
+stages:
+  - name: 'Создание рекламодателей №7, №8, №9'
+    request:
+      url: '{BASE_URL}/advertisers/bulk'
+      method: POST
+      json:
+        - !include components/advertisers/advertiser7.yml
+        - !include components/advertisers/advertiser8.yml
+        - !include components/advertisers/advertiser9.yml
+    response:
+      status_code: 201
+      json:
+        - !include components/advertisers/advertiser7.yml
+        - !include components/advertisers/advertiser8.yml
+        - !include components/advertisers/advertiser9.yml
+
+  - name: 'Создание клиентов №6, №7, №8'
+    request:
+      url: '{BASE_URL}/clients/bulk'
+      method: POST
+      json:
+        - !include components/clients/client6.yml
+        - !include components/clients/client7.yml
+        - !include components/clients/client8.yml
+    response:
+      status_code: 201
+      json:
+        - !include components/clients/client6.yml
+        - !include components/clients/client7.yml
+        - !include components/clients/client8.yml
+
+  - name: 'Обновление ml скора пользователь №6 рекламодатель №7'
+    request:
+      url: '{BASE_URL}/ml-scores'
+      method: POST
+      json:
+        client_id: dd8b7c64-f875-4625-87c2-a17baa09f535  # tech_enthusiast
+        advertiser_id: e14e523e-7bc0-4340-b096-22b669b49a20  # Спортмастер
+        score: 72
+    response:
+      status_code: 200
+
+  - name: 'Обновление ml скора пользователь №6 рекламодатель №8'
+    request:
+      url: '{BASE_URL}/ml-scores'
+      method: POST
+      json:
+        client_id: dd8b7c64-f875-4625-87c2-a17baa09f535  # tech_enthusiast
+        advertiser_id: b0f9c106-4ec7-4129-a423-8d4334084f60  # DNS
+        score: 65
+    response:
+      status_code: 200
+
+  - name: 'Обновление ml скора пользователь №7 рекламодатель №8'
+    request:
+      url: '{BASE_URL}/ml-scores'
+      method: POST
+      json:
+        client_id: 8f842e24-a139-4e04-b8a3-486bae305d90  # fashion_lover
+        advertiser_id: e14e523e-7bc0-4340-b096-22b669b49a20  # Спортмастер
+        score: 7
+    response:
+      status_code: 200
+
+  - name: 'Обновление ml скора пользователь №7 рекламодатель №9'
+    request:
+      url: '{BASE_URL}/ml-scores'
+      method: POST
+      json:
+        client_id: 8f842e24-a139-4e04-b8a3-486bae305d90  # fashion_lover
+        advertiser_id: b0f9c106-4ec7-4129-a423-8d4334084f60  # DNS
+        score: 74
+    response:
+      status_code: 200

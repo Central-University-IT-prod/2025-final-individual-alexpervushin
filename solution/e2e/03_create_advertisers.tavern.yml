@@ -1,0 +1,41 @@
+test_name: Создание рекламодателей
+
+stages:
+  - name: 'Создание рекламодателей №1, №2, №3'
+    request:
+      url: '{BASE_URL}/advertisers/bulk'
+      method: POST
+      json:
+        - !include components/advertisers/advertiser1.yml
+        - !include components/advertisers/advertiser2.yml
+        - !include components/advertisers/advertiser3.yml
+    response:
+      status_code: 201
+      json:
+        - !include components/advertisers/advertiser1.yml
+        - !include components/advertisers/advertiser2.yml
+        - !include components/advertisers/advertiser3.yml
+
+  - name: 'Получение рекламодателя №1'
+    request:
+      url: '{BASE_URL}/advertisers/e14e523e-7bc0-4340-b096-22b669b49a20'
+      method: GET
+    response:
+      status_code: 200
+      json: !include components/advertisers/advertiser1.yml
+
+  - name: 'Получение рекламодателя №2'
+    request:
+      url: '{BASE_URL}/advertisers/b0f9c106-4ec7-4129-a423-8d4334084f60'
+      method: GET
+    response:
+      status_code: 200
+      json: !include components/advertisers/advertiser2.yml
+
+  - name: 'Получение рекламодателя №3'
+    request:
+      url: '{BASE_URL}/advertisers/556d2f15-2a23-4d34-9f62-d28b2fa62817'
+      method: GET
+    response:
+      status_code: 200
+      json: !include components/advertisers/advertiser3.yml

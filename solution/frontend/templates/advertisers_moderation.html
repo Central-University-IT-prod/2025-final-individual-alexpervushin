@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель модерации</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .dashboard-header {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            color: var(--color-white);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px var(--color-shadow);
+            box-sizing: border-box;
+        }
+
+        .dashboard-header h1 {
+            margin: 0;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--color-white);
+            font-size: 13px;
+            margin-left: 1rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            max-width: 60%;
+        }
+
+        .user-info span {
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+            margin-left: 0 !important;
+            background: var(--color-yellow);
+            color: var(--color-dark-green);
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            font-weight: 500;
+            height: 28px;
+        }
+
+        .dashboard-container {
+            padding: 100px 2rem 2rem;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px var(--color-shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px var(--color-shadow);
+            border-color: var(--color-yellow);
+        }
+
+        .card-title {
+            font-family: var(--tui-font-heading);
+            color: var(--color-white);
+            font-size: 20px;
+            margin: 0 0 1.5rem 0;
+            font-weight: 500;
+        }
+
+        .word-input {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .word-input input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--color-white);
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .word-input input:focus {
+            outline: none;
+            border-color: var(--color-yellow);
+            box-shadow: 0 0 0 2px rgba(255, 221, 45, 0.2);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            background: var(--color-yellow);
+            color: var(--color-dark-green);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-delete {
+            background: #ff4444;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 13px;
+        }
+
+        .btn-delete:hover {
+            background: #ff2222;
+        }
+
+        .word-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .word-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            color: var(--color-white);
+            transition: all 0.2s ease;
+        }
+
+        .word-item:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .day-input {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--color-white);
+            font-size: 14px;
+            width: 100px;
+            transition: all 0.2s ease;
+        }
+
+        .day-input:focus {
+            outline: none;
+            border-color: var(--color-yellow);
+            box-shadow: 0 0 0 2px rgba(255, 221, 45, 0.2);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--color-yellow);
+            text-decoration: none;
+            margin-top: 2rem;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            transform: translateX(-4px);
+        }
+
+        .back-link:before {
+            content: "←";
+            font-size: 18px;
+        }
+
+        @media (max-width: 1200px) {
+            .user-info {
+                font-size: 12px;
+                gap: 0.4rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .user-info {
+                max-width: 50%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 80px 1rem 1rem;
+            }
+
+            .word-input {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .user-info {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+                margin-left: 0;
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .user-info span {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        .current-day {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .current-day-label {
+            color: var(--color-gray-medium);
+            font-size: 14px;
+        }
+
+        .current-day-value {
+            color: var(--color-yellow);
+            font-size: 16px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="dashboard-header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <h1>Панель модерации</h1>
+            <a href="/web/advertisers/dashboard" style="color: var(--color-yellow); 
+                       text-decoration: none; 
+                       font-size: 14px; 
+                       padding: 4px 12px; 
+                       border: 1px solid var(--color-yellow); 
+                       border-radius: 4px; 
+                       transition: all 0.2s ease;
+                       display: flex;
+                       align-items: center;
+                       gap: 6px;
+                       background: rgba(255, 221, 45, 0.05);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9z"></path>
+                    <polyline points="9 21 9 13 15 13 15 21"></polyline>
+                </svg>
+                Дашборд
+            </a>
+        </div>
+        <div class="user-info">
+            <span>Модератор</span>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="cards-container">
+            <div class="card">
+                <h2 class="card-title">Управление запрещенными словами</h2>
+                <div class="word-input">
+                    <input type="text" id="newWordInput" placeholder="Введите новое запрещенное слово">
+                    <button class="btn" id="addWordBtn">Добавить</button>
+                </div>
+                <h3 class="card-title" style="font-size: 16px;">Список запрещенных слов:</h3>
+                <div class="word-list" id="wordList">
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Установка текущего дня</h2>
+                <div class="current-day">
+                    <span class="current-day-label">Текущий день:</span>
+                    <span class="current-day-value">1</span>
+                </div>
+                <div class="word-input">
+                    <input type="number" class="day-input" placeholder="1" value="1">
+                    <button class="btn">Установить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function getCurrentDay() {
+            try {
+                const response = await fetch('/time/current_date', {
+                    method: 'GET',
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                document.querySelector('.current-day-value').textContent = data.current_date;
+                document.querySelector('.day-input').value = data.current_date;
+            } catch (error) {
+                console.error('Ошибка при получении текущего дня:', error);
+            }
+        }
+
+        async function setCurrentDay(newDay) {
+            try {
+                const response = await fetch('/time/advance', {
+                    method: 'POST',
+                    headers: {
+                        'accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        current_date: parseInt(newDay)
+                    })
+                });
+                if (response.ok) {
+                    getCurrentDay();
+                }
+            } catch (error) {
+                console.error('Ошибка при установке дня:', error);
+            }
+        }
+
+        async function getForbiddenWords() {
+            try {
+                const response = await fetch('/forbidden-words', {
+                    method: 'GET',
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+                const words = await response.json();
+                updateWordList(words);
+            } catch (error) {
+                console.error('Ошибка при получении списка слов:', error);
+            }
+        }
+
+        async function updateForbiddenWords(words) {
+            try {
+                const response = await fetch('/forbidden-words', {
+                    method: 'PUT',
+                    headers: {
+                        'accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(words)
+                });
+                if (response.ok) {
+                    getForbiddenWords();
+                }
+            } catch (error) {
+                console.error('Ошибка при обновлении списка слов:', error);
+            }
+        }
+
+        function updateWordList(words) {
+            const wordList = document.getElementById('wordList');
+            wordList.innerHTML = '';
+
+            words.forEach(word => {
+                const wordItem = document.createElement('div');
+                wordItem.className = 'word-item';
+                wordItem.innerHTML = `
+                    <span>${word}</span>
+                    <button class="btn btn-delete">Удалить</button>
+                `;
+
+                wordItem.querySelector('.btn-delete').addEventListener('click', () => {
+                    const updatedWords = words.filter(w => w !== word);
+                    updateForbiddenWords(updatedWords);
+                });
+
+                wordList.appendChild(wordItem);
+            });
+        }
+
+        document.getElementById('addWordBtn').addEventListener('click', () => {
+            const input = document.getElementById('newWordInput');
+            const newWord = input.value.trim();
+
+            if (newWord) {
+                fetch('/forbidden-words')
+                    .then(response => response.json())
+                    .then(words => {
+                        if (!words.includes(newWord)) {
+                            const updatedWords = [...words, newWord];
+                            updateForbiddenWords(updatedWords);
+                            input.value = '';
+                        }
+                    });
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            getCurrentDay();
+            getForbiddenWords();
+        });
+
+        document.querySelector('.day-input').closest('.word-input').querySelector('.btn').addEventListener('click', function () {
+            const newDay = document.querySelector('.day-input').value;
+            setCurrentDay(newDay);
+        });
+    </script>
+</body>
+
+</html>

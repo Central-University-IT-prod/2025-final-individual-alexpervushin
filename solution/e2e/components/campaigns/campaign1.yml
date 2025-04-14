@@ -1,0 +1,11 @@
+cost_per_impression: 52.4
+cost_per_click: 78.6
+ad_title: Спортивный образ жизни доступен каждому!
+ad_text: Скидки до 70% на спортивную одежду и инвентарь. Бесплатная доставка от 5000 рублей!
+targeting:
+  age_from: 16
+  gender: ALL
+impressions_limit: 25
+clicks_limit: 12
+start_date: 0
+end_date: 10

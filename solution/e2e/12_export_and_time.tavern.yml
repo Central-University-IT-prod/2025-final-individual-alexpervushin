@@ -1,0 +1,43 @@
+test_name: Проверка экспорта и времени
+
+stages:
+  - name: 'Создание рекламодателя для тестов'
+    request:
+      url: '{BASE_URL}/advertisers/bulk'
+      method: POST
+      json:
+        - !include components/advertisers/advertiser1.yml
+    response:
+      status_code: 201
+
+  - name: 'Экспорт данных рекламодателя'
+    request:
+      url: '{BASE_URL}/e14e523e-7bc0-4340-b096-22b669b49a20/export'
+      method: GET
+    response:
+      status_code: 200
+
+  - name: 'Получение текущей даты'
+    request:
+      url: '{BASE_URL}/time/current_date'
+      method: GET
+    response:
+      status_code: 200
+      json:
+        current_date: !anyint
+
+  - name: 'Проверка метрик'
+    request:
+      url: '{BASE_URL}/metrics'
+      method: GET
+    response:
+      status_code: 200
+
+  - name: 'Проверка healthcheck'
+    request:
+      url: '{BASE_URL}/healthcheck'
+      method: GET
+    response:
+      status_code: 200
+      json:
+        status: !anystr 

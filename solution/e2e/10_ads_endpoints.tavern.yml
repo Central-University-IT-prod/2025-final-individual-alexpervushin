@@ -1,0 +1,70 @@
+test_name: Проверка рекламных объявлений
+
+stages:
+  - name: 'Создание клиента для тестов'
+    request:
+      url: '{BASE_URL}/clients/bulk'
+      method: POST
+      json:
+        - !include components/clients/client1.yml
+    response:
+      status_code: 201
+
+  - name: 'Создание рекламодателя для тестов'
+    request:
+      url: '{BASE_URL}/advertisers/bulk'
+      method: POST
+      json:
+        - !include components/advertisers/advertiser1.yml
+    response:
+      status_code: 201
+
+  - name: 'Создание рекламной кампании для тестов'
+    request:
+      url: '{BASE_URL}/advertisers/e14e523e-7bc0-4340-b096-22b669b49a20/campaigns'
+      method: POST
+      json: !include components/campaigns/campaign1.yml
+    response:
+      status_code: 201
+      save:
+        json:
+          test_campaign_id: campaign_id
+
+  - name: 'Получение рекламного объявления для клиента (создание импрессии)'
+    request:
+      url: '{BASE_URL}/ads'
+      method: GET
+      params:
+        client_id: 43b9be1e-03a2-472d-99ee-bad86838fd0d
+    response:
+      status_code: 200
+      json:
+        ad_id: !anystr
+        ad_title: !anystr
+        ad_text: !anystr
+        image_url: !anystr
+        advertiser_id: !anystr
+      save:
+        json:
+          received_ad_id: ad_id
+
+  - name: 'Фиксация клика по рекламному объявлению'
+    request:
+      url: '{BASE_URL}/ads/{received_ad_id}/click'
+      method: POST
+      json:
+        client_id: 43b9be1e-03a2-472d-99ee-bad86838fd0d
+    response:
+      status_code: 200
+
+  - name: 'Отправка отзыва о рекламном объявлении'
+    request:
+      url: '{BASE_URL}/ads/feedback'
+      method: POST
+      json:
+        ad_id: '{received_ad_id}'
+        client_id: 43b9be1e-03a2-472d-99ee-bad86838fd0d
+        rating: 5
+        comment: "Отличная реклама!"
+    response:
+      status_code: 200 

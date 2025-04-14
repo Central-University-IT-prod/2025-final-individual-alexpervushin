@@ -1,0 +1,10 @@
+cost_per_impression: 35.8
+cost_per_click: 58.3
+ad_title: Л'Этуаль - мир красоты и парфюмерии
+ad_text: Роскошная косметика и парфюмерия. Скидки до 40% и подарки при покупке!
+targeting:
+  gender: ALL
+impressions_limit: 22
+clicks_limit: 11
+start_date: 1
+end_date: 7

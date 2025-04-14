@@ -1,0 +1,11 @@
+cost_per_impression: 38.9
+cost_per_click: 58.4
+ad_title: Детский Мир - все лучшее детям!
+ad_text: Игрушки, одежда и товары для детей. Скидки для держателей карт!
+targeting:
+  gender: ALL
+  location: Парк Сокольники
+impressions_limit: 22
+clicks_limit: 11
+start_date: 0
+end_date: 6

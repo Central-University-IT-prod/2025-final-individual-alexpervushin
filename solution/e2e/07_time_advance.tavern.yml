@@ -1,0 +1,36 @@
+test_name: Обновление времени в системе
+
+stages:
+  - name: 'Установка даты на 1'
+    request:
+      url: '{BASE_URL}/time/advance'
+      method: POST
+      json:
+        current_date: 1
+    response:
+      status_code: 200
+      json:
+        current_date: 1
+
+  - name: 'Установка даты на 1 повторно'
+    request:
+      url: '{BASE_URL}/time/advance'
+      method: POST
+      json:
+        current_date: 1
+    response:
+      status_code: 200
+      json:
+        current_date: 1
+
+  - name: 'Установка даты на 2'
+    request:
+      url: '{BASE_URL}/time/advance'
+      method: POST
+      json:
+        current_date: 2
+    response:
+      status_code: 200
+      json:
+        current_date: 2
+

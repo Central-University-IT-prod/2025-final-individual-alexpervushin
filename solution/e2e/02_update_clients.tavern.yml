@@ -1,0 +1,53 @@
+test_name: Обновление клиентов
+
+stages:
+  - name: 'Получение клиента №4 до обновления'
+    request:
+      url: '{BASE_URL}/clients/43b9be1e-03a2-472d-99ee-bad86838fd0d'
+      method: GET
+    response:
+      status_code: 200
+      json: !include components/clients/client4.yml
+
+  - name: 'Обновление клиента №4'
+    request:
+      url: '{BASE_URL}/clients/bulk'
+      method: POST
+      json:
+        - !include components/clients/client4.yml
+    response:
+      status_code: 201
+
+  - name: 'Получение клиента №4 после обновления'
+    request:
+      url: '{BASE_URL}/clients/43b9be1e-03a2-472d-99ee-bad86838fd0d'
+      method: GET
+    response:
+      status_code: 200
+      json: !include components/clients/client4.yml
+
+  # Клиент 5
+  - name: 'Получение клиента №5 до обновления'
+    request:
+      url: '{BASE_URL}/clients/c7a98425-bd75-4e1b-b84d-15ea11005e7d'
+      method: GET
+    response:
+      status_code: 200
+      json: !include components/clients/client5.yml
+
+  - name: 'Обновление клиента №5'
+    request:
+      url: '{BASE_URL}/clients/bulk'
+      method: POST
+      json:
+        - !include components/clients/client5.yml
+    response:
+      status_code: 201
+
+  - name: 'Получение клиента №5 после обновления'
+    request:
+      url: '{BASE_URL}/clients/c7a98425-bd75-4e1b-b84d-15ea11005e7d'
+      method: GET
+    response:
+      status_code: 200
+      json: !include components/clients/client5.yml

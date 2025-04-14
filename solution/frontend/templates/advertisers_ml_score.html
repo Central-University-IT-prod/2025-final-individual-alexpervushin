@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Score - День 1</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .ml-score-container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            box-sizing: border-box;
+            width: 90%;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group:last-of-type {
+            margin-bottom: 1rem;
+        }
+
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--color-white);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-white);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--color-yellow);
+        }
+
+        .submit-button {
+            background: var(--color-yellow);
+            color: black;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button {
+            background: transparent;
+            color: var(--color-yellow);
+            border: 1px solid var(--color-yellow);
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 221, 45, 0.1);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.success {
+            background-color: #4CAF50;
+        }
+
+        .notification.error {
+            background-color: #f44336;
+        }
+
+        .notification.show {
+            opacity: 1;
+        }
+    </style>
+    <script>
+        async function checkAuth() {
+            const advertiserId = localStorage.getItem('advertiser_id');
+            if (!advertiserId) {
+                window.location.href = '/';
+                return;
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+
+            setTimeout(() => {
+                notification.className = 'notification';
+            }, 3000);
+        }
+
+        async function submitScore(event) {
+            event.preventDefault();
+
+            const clientId = document.getElementById('clientId').value;
+            const advertiserId = document.getElementById('advertiserId').value;
+            const score = parseFloat(document.getElementById('score').value);
+
+            if (!clientId || !advertiserId || isNaN(score)) {
+                showNotification('Пожалуйста, заполните все поля корректно', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/ml-scores', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        client_id: clientId,
+                        advertiser_id: advertiserId,
+                        score: score
+                    })
+                });
+
+                if (response.ok) {
+                    showNotification('ML скор успешно обновлен', 'success');
+                    document.getElementById('mlScoreForm').reset();
+                } else {
+                    const error = await response.json();
+                    showNotification(error.detail || 'Произошла ошибка при обновлении ML скора', 'error');
+                }
+            } catch (error) {
+                showNotification('Произошла ошибка при отправке запроса', 'error');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', checkAuth);
+    </script>
+</head>
+
+<body>
+    <div class="ml-score-container">
+        <h1 style="color: var(--color-white); margin-bottom: 2rem;">Обновление ML скора</h1>
+        <form id="mlScoreForm" onsubmit="submitScore(event)">
+            <div class="form-group">
+                <label for="clientId">ID клиента</label>
+                <input type="text" id="clientId" required placeholder="Введите ID клиента">
+            </div>
+            <div class="form-group">
+                <label for="advertiserId">ID рекламодателя</label>
+                <input type="text" id="advertiserId" required placeholder="Введите ID рекламодателя">
+            </div>
+            <div class="form-group">
+                <label for="score">Скор</label>
+                <input type="number" id="score" required step="any" placeholder="Введите значение скора">
+            </div>
+            <div class="buttons-container">
+                <button type="submit" class="submit-button">Обновить скор</button>
+                <a href="/web/advertisers/dashboard" class="back-button">Назад</a>
+            </div>
+        </form>
+    </div>
+    <div id="notification" class="notification"></div>
+</body>
+
+</html>

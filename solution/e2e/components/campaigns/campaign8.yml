@@ -1,0 +1,12 @@
+cost_per_impression: 33.4
+cost_per_click: 54.2
+ad_title: Золотое Яблоко - мир luxury красоты
+ad_text: Более 50000 товаров премиальной косметики. Профессиональная консультация и подарки!
+targeting:
+  location: Аэропорт Шереметьево
+  age_from: 25
+  gender: ALL
+impressions_limit: 20
+clicks_limit: 10
+start_date: 1
+end_date: 7

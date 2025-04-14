@@ -1,0 +1,11 @@
+cost_per_impression: 45.8
+cost_per_click: 65.3
+ad_title: Техника для умного дома
+ad_text: DNS - надежная техника по выгодным ценам. Рассрочка 0-0-24!
+targeting:
+  age_from: 21
+  gender: ALL
+impressions_limit: 30
+clicks_limit: 15
+start_date: 1
+end_date: 8

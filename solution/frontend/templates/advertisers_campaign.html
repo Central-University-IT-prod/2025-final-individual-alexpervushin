@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали кампании</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .campaign-header {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            color: var(--color-white);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        .campaign-header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: var(--color-dark-green);
+            font-size: 16px;
+            padding: 8px 16px;
+            background: var(--color-yellow);
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+            width: fit-content;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .edit-button {
+            border: none;
+            cursor: pointer;
+            color: var(--color-dark-green);
+            font-size: 16px;
+            padding: 8px 16px;
+            background: var(--color-yellow);
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+            margin-top: 1rem;
+            width: fit-content;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .back-link:hover,
+        .edit-button:hover {
+            background: var(--color-white);
+            color: var(--color-dark-green);
+        }
+
+        .back-navigation {
+            width: 100%;
+            max-width: 1400px;
+            margin: 80px auto 0;
+            padding: 0 2rem;
+        }
+
+        .campaign-container {
+            padding: 2rem;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .stats-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-label {
+            color: var(--color-white);
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0.7;
+        }
+
+        .stat-value {
+            color: var(--color-white);
+            font-size: 24px;
+            font-weight: 600;
+            font-family: var(--tui-font-heading);
+        }
+
+        .daily-stats {
+            margin-top: 2rem;
+        }
+
+        .daily-stats h2 {
+            color: var(--color-white);
+            font-size: 20px;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            font-family: var(--tui-font-heading);
+        }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            color: var(--color-white);
+        }
+
+        .stats-table th {
+            color: var(--color-white);
+            font-weight: 500;
+            font-size: 13px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .stats-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stats-table tr:hover td {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .details-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1.25rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: fit-content;
+            color: var(--color-white);
+            position: sticky;
+            top: 100px;
+        }
+
+        .details-card h2 {
+            font-size: 20px;
+            font-family: var(--tui-font-heading);
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: var(--color-white);
+            letter-spacing: 0.5px;
+        }
+
+        .detail-label {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-size: 13px;
+            font-family: var(--tui-font-text);
+            color: var(--color-gray-medium);
+            letter-spacing: 0.3px;
+        }
+
+        .editable-value {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-white);
+            font-size: 14px;
+            font-family: var(--tui-font-text);
+            height: 38px;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+        }
+
+        .editable-value:focus {
+            outline: 2px solid var(--color-yellow);
+            outline-offset: -2px;
+        }
+
+        textarea.editable-value {
+            min-height: 100px;
+            resize: vertical;
+            height: auto;
+        }
+
+        select.editable-value {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23333333' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            padding-right: 2rem;
+        }
+
+        .edit-button {
+            min-width: 200px;
+            padding: 8px 24px;
+            background: var(--color-yellow);
+            color: var(--color-dark-green);
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: var(--tui-font-text);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            height: 38px;
+            margin-top: 1.5rem;
+        }
+
+        .edit-button:hover {
+            background-color: var(--color-white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .campaign-image {
+            margin-top: 1.5rem;
+            width: 100%;
+            height: 240px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .campaign-image.highlight {
+            border-color: var(--color-yellow);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .campaign-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .image-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .image-upload-label {
+            cursor: pointer;
+            padding: 8px 16px;
+            background: var(--color-yellow);
+            color: var(--color-dark-green);
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .image-upload-label:hover {
+            background: var(--color-white);
+            transform: translateY(-2px);
+        }
+
+        .delete-image-btn {
+            padding: 8px 16px;
+            background: rgba(255, 71, 87, 0.9);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-image-btn:hover {
+            background: rgba(255, 71, 87, 1);
+            transform: translateY(-2px);
+        }
+
+        #imageUpload {
+            display: none;
+        }
+
+        .upload-placeholder {
+            color: var(--color-white);
+            opacity: 0.7;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .campaign-container {
+                grid-template-columns: 1fr;
+            }
+
+            .details-card {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .back-navigation {
+                margin: 60px auto 0;
+                padding: 0 1rem;
+            }
+
+            .campaign-container {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-card,
+            .details-card {
+                padding: 1.5rem;
+            }
+
+            .stat-value {
+                font-size: 20px;
+            }
+
+            .campaign-header {
+                flex-direction: row;
+                padding: 1rem;
+            }
+
+            .header-actions {
+                display: flex;
+                flex-direction: row;
+                gap: 0.5rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        body {
+            background-color: var(--color-dark-green);
+            min-height: 100vh;
+        }
+
+        .edit-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .edit-form input,
+        .edit-form textarea,
+        .edit-form select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-white);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification.success {
+            background-color: rgba(46, 213, 115, 0.9);
+        }
+
+        .notification.error {
+            background-color: rgba(255, 71, 87, 0.9);
+        }
+
+        .editable-value {
+            color: var(--color-white);
+            font-size: 15px;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid transparent;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .editable-value:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .editable-value:focus {
+            border-color: var(--color-yellow);
+            outline: none;
+        }
+
+        .save-button {
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .delete-campaign-btn {
+            padding: 8px 16px;
+            background: rgba(255, 71, 87, 0.9);
+            color: var(--color-white);
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .delete-campaign-btn:hover {
+            background: rgba(255, 71, 87, 1);
+            transform: translateY(-2px);
+        }
+
+        .details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .details-header h2 {
+            margin: 0;
+        }
+
+        .feedback-stats {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feedback-summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .rating-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .rating-label {
+            color: var(--color-white);
+            font-size: 13px;
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating-value {
+            color: var(--color-white);
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .feedback-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .feedback-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .feedback-rating {
+            color: var(--color-yellow);
+            font-weight: 500;
+        }
+
+        .feedback-date {
+            color: var(--color-white);
+            opacity: 0.7;
+            font-size: 13px;
+        }
+
+        .feedback-comment {
+            color: var(--color-white);
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .generate-image-btn {
+            padding: 8px 16px;
+            background: var(--color-dark-green);
+            color: var(--color-white);
+            border: 1px solid var(--color-white);
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .generate-image-btn:hover {
+            background: var(--color-white);
+            color: var(--color-dark-green);
+            transform: translateY(-2px);
+        }
+
+        .ai-preview-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .ai-preview-content {
+            background: var(--color-dark-green);
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .ai-preview-image {
+            max-width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+        }
+
+        .ai-preview-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+
+        .ai-preview-modal.show {
+            display: flex;
+        }
+    </style>
+    <script>
+        async function loadCampaignStats() {
+            const pathParts = window.location.pathname.split('/');
+            const campaignId = pathParts[pathParts.length - 1];
+
+            try {
+                const statsResponse = await fetch(`/stats/campaigns/${campaignId}`, {
+                    method: 'GET',
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+
+                if (statsResponse.ok) {
+                    const stats = await statsResponse.json();
+                    document.getElementById('impressions').textContent = stats.impressions_count;
+                    document.getElementById('clicks').textContent = stats.clicks_count;
+                    document.getElementById('conversion').textContent = `${(stats.conversion * 100).toFixed(1)}%`;
+                    document.getElementById('spent-impressions').textContent = `$${stats.spent_impressions}`;
+                    document.getElementById('spent-clicks').textContent = `$${stats.spent_clicks}`;
+                    document.getElementById('spent-total').textContent = `$${stats.spent_total}`;
+                }
+
+                const dailyStatsResponse = await fetch(`/stats/campaigns/${campaignId}/daily`, {
+                    method: 'GET',
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+
+                if (dailyStatsResponse.ok) {
+                    const dailyStats = await dailyStatsResponse.json();
+                    const tableBody = document.querySelector('.stats-table tbody');
+                    tableBody.innerHTML = '';
+
+                    dailyStats.forEach(day => {
+                        tableBody.innerHTML += `
+                            <tr>
+                                <td>${day.date}</td>
+                                <td>${day.impressions_count}</td>
+                                <td>${day.clicks_count}</td>
+                                <td>$${day.spent_total}</td>
+                            </tr>
+                        `;
+                    });
+                }
+            } catch (error) {
+                console.error('Ошибка при загрузке статистики:', error);
+            }
+        }
+
+        async function loadCampaignDetails() {
+            const pathParts = window.location.pathname.split('/');
+            const campaignId = pathParts[pathParts.length - 1];
+            const advertiserId = localStorage.getItem('advertiser_id');
+
+            try {
+                const response = await fetch(`/advertisers/${advertiserId}/campaigns/${campaignId}`, {
+                    method: 'GET',
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const campaign = await response.json();
+
+                    document.getElementById('edit-title').value = campaign.ad_title;
+                    document.getElementById('edit-text').value = campaign.ad_text;
+                    document.getElementById('edit-cost-per-impression').value = campaign.cost_per_impression;
+                    document.getElementById('edit-cost-per-click').value = campaign.cost_per_click;
+                    document.getElementById('edit-gender').value = campaign.targeting.gender;
+                    document.getElementById('edit-age-from').value = campaign.targeting.age_from;
+                    document.getElementById('edit-age-to').value = campaign.targeting.age_to;
+                    document.getElementById('edit-location').value = campaign.targeting.location;
+
+                    document.querySelector('.campaign-header h1').textContent = campaign.ad_title;
+
+                    if (campaign.image_url) {
+                        updateCampaignImage(campaign.image_url);
+                    } else {
+                        clearCampaignImage();
+                    }
+                }
+            } catch (error) {
+                console.error('Ошибка при загрузке деталей кампании:', error);
+            }
+        }
+
+        function showNotification(message, isSuccess) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${isSuccess ? 'success' : 'error'}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => notification.classList.add('show'), 100);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        async function updateCampaign(campaignData) {
+            const pathParts = window.location.pathname.split('/');
+            const campaignId = pathParts[pathParts.length - 1];
+            const advertiserId = localStorage.getItem('advertiser_id');
+
+            try {
+                const response = await fetch(`/advertisers/${advertiserId}/campaigns/${campaignId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'accept': 'application/json'
+                    },
+                    body: JSON.stringify(campaignData)
+                });
+
+                if (response.ok) {
+                    showNotification('Кампания успешно обновлена!', true);
+                    const updatedCampaign = await response.json();
+                    document.querySelector('.campaign-header h1').textContent = updatedCampaign.ad_title;
+                    return true;
+                } else {
+                    showNotification('Не удалось обновить кампанию. Пожалуйста, попробуйте снова.', false);
+                    return false;
+                }
+            } catch (error) {
+                console.error('Ошибка при обновлении кампании:', error);
+                showNotification('Ошибка при обновлении кампании. Пожалуйста, попробуйте снова.', false);
+                return false;
+            }
+        }
+
+        async function uploadImage(file) {
+            const pathParts = window.location.pathname.split('/');
+            const campaignId = pathParts[pathParts.length - 1];
+            const advertiserId = localStorage.getItem('advertiser_id');
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const response = await fetch(`/advertisers/${advertiserId}/campaigns/${campaignId}/image`, {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    updateCampaignImage(data.image_url);
+                    showNotification('Изображение успешно загружено', true);
+                } else {
+                    showNotification('Ошибка при загрузке изображения', false);
+                }
+            } catch (error) {
+                console.error('Ошибка при загрузке изображения:', error);
+                showNotification('Ошибка при загрузке изображения', false);
+            }
+        }
+
+        async function deleteImage() {
+            const pathParts = window.location.pathname.split('/');
+            const campaignId = pathParts[pathParts.length - 1];
+            const advertiserId = localStorage.getItem('advertiser_id');
+
+            try {
+                const response = await fetch(`/advertisers/${advertiserId}/campaigns/${campaignId}/image`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    clearCampaignImage();
+                    showNotification('Изображение успешно удалено', true);
+                } else {
+                    showNotification('Ошибка при удалении изображения', false);
+                }
+            } catch (error) {
+                console.error('Ошибка при удалении изображения:', error);
+                showNotification('Ошибка при удалении изображения', false);
+            }
+        }
+
+        function updateCampaignImage(imageUrl) {
+            const imageContainer = document.querySelector('.campaign-image');
+            const img = imageContainer.querySelector('img') || document.createElement('img');
+            const placeholder = imageContainer.querySelector('.upload-placeholder');
+            const deleteBtn = document.querySelector('.delete-image-btn');
+
+            if (imageUrl) {
+                if (placeholder) placeholder.style.display = 'none';
+                img.src = imageUrl;
+                img.alt = 'Campaign Image';
+                img.style.display = 'block';
+                if (!imageContainer.contains(img)) {
+                    imageContainer.appendChild(img);
+                }
+                deleteBtn.style.display = 'inline-flex';
+            }
+        }
+
+        function clearCampaignImage() {
+            const imageContainer = document.querySelector('.campaign-image');
+            const img = imageContainer.querySelector('img');
+            const placeholder = imageContainer.querySelector('.upload-placeholder');
+            const deleteBtn = document.querySelector('.delete-image-btn');
+
+            if (img) {
+                img.remove();
+            }
+            placeholder.style.display = 'block';
+            deleteBtn.style.display = 'none';
+        }
+
+        function setupImageDragAndDrop() {
+            const dropZone = document.querySelector('.campaign-image');
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight(e) {
+                dropZone.classList.add('highlight');
+            }
+
+            function unhighlight(e) {
+                dropZone.classList.remove('highlight');
+            }
+
+            dropZone.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+
+                if (files && files[0]) {
+                    uploadImage(files[0]);
+                }
+            }
+        }
+
+        async function deleteCampaign() {
+            const pathParts = window.location.pathname.split('/');
+            const campaignId = pathParts[pathParts.length - 1];
+            const advertiserId = localStorage.getItem('advertiser_id');
+
+            if (confirm('Вы уверены, что хотите удалить эту кампанию?')) {
+                try {
+                    const response = await fetch(`/advertisers/${advertiserId}/campaigns/${campaignId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        window.location.href = '/web/advertisers/dashboard';
+                    } else {
+                        showNotification('Ошибка при удалении кампании', false);
+                    }
+                } catch (error) {
+                    console.error('Ошибка при удалении кампании:', error);
+                    showNotification('Ошибка при удалении кампании', false);
+                }
+            }
+        }
+
+        async function loadCampaignFeedback() {
+            const pathParts = window.location.pathname.split('/');
+            const campaignId = pathParts[pathParts.length - 1];
+
+            try {
+                const response = await fetch(`/stats/campaigns/${campaignId}/feedback`, {
+                    method: 'GET',
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    document.getElementById('average-rating').textContent =
+                        data.average_rating ? data.average_rating.toFixed(1) : '-';
+                    document.getElementById('total-ratings').textContent = data.total_ratings;
+
+                    const feedbackList = document.getElementById('feedback-list');
+                    feedbackList.innerHTML = '';
+
+                    data.feedbacks.forEach(feedback => {
+                        const date = new Date(feedback.created_at).toLocaleDateString();
+                        const feedbackHtml = `
+                        <div class="feedback-item">
+                            <div class="feedback-header">
+                                <div class="feedback-rating">★ ${feedback.rating}</div>
+                                <div class="feedback-date">${date}</div>
+                            </div>
+                            ${feedback.comment ? `<div class="feedback-comment">${feedback.comment}</div>` : ''}
+                        </div>
+                    `;
+                        feedbackList.innerHTML += feedbackHtml;
+                    });
+                }
+            } catch (error) {
+                console.error('Ошибка при загрузке отзывов:', error);
+            }
+        }
+
+        async function generateAIImage() {
+            const pathParts = window.location.pathname.split('/');
+            const campaignId = pathParts[pathParts.length - 1];
+
+            try {
+                showNotification('Генерация изображения...', true);
+
+                const response = await fetch(`/generate-image?campaign_id=${campaignId}`, {
+                    method: 'GET',
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const imageUrl = URL.createObjectURL(await response.blob());
+                    showAIPreview(imageUrl);
+                } else {
+                    showNotification('Ошибка при генерации изображения', false);
+                }
+            } catch (error) {
+                console.error('Ошибка при генерации изображения:', error);
+                showNotification('Ошибка при генерации изображения', false);
+            }
+        }
+
+        function showAIPreview(imageUrl) {
+            const modal = document.querySelector('.ai-preview-modal');
+            const previewImage = modal.querySelector('.ai-preview-image');
+            previewImage.src = imageUrl;
+            modal.classList.add('show');
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const pathParts = window.location.pathname.split('/');
+            const campaignId = pathParts[pathParts.length - 1];
+
+            document.getElementById('campaign-id').textContent = campaignId;
+
+            await Promise.all([
+                loadCampaignStats(),
+                loadCampaignDetails(),
+                loadCampaignFeedback()
+            ]);
+            setupImageDragAndDrop();
+
+            document.getElementById('campaignForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const gender = document.getElementById('edit-gender').value;
+                const ageFrom = parseInt(document.getElementById('edit-age-from').value);
+                const ageTo = parseInt(document.getElementById('edit-age-to').value);
+                const location = document.getElementById('edit-location').value;
+
+                const campaignData = {
+                    ad_title: document.getElementById('edit-title').value,
+                    ad_text: document.getElementById('edit-text').value,
+                    cost_per_impression: parseFloat(document.getElementById('edit-cost-per-impression').value),
+                    cost_per_click: parseFloat(document.getElementById('edit-cost-per-click').value),
+                    targeting: (gender || ageFrom || ageTo || location) ? {
+                        gender: gender || null,
+                        age_from: isNaN(ageFrom) ? null : ageFrom,
+                        age_to: isNaN(ageTo) ? null : ageTo,
+                        location: location || null
+                    } : null
+                };
+
+                await updateCampaign(campaignData);
+            });
+
+            const imageUpload = document.getElementById('imageUpload');
+            imageUpload.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    uploadImage(e.target.files[0]);
+                }
+            });
+
+            const deleteImageBtn = document.querySelector('.delete-image-btn');
+            deleteImageBtn.addEventListener('click', deleteImage);
+
+            document.querySelector('.delete-campaign-btn').addEventListener('click', deleteCampaign);
+
+            const generateBtn = document.querySelector('.generate-image-btn');
+            generateBtn.addEventListener('click', generateAIImage);
+
+            const modal = document.querySelector('.ai-preview-modal');
+            const useImageBtn = modal.querySelector('.use-image-btn');
+            const cancelBtn = modal.querySelector('.cancel-btn');
+
+            useImageBtn.addEventListener('click', async () => {
+                const previewImage = modal.querySelector('.ai-preview-image');
+                const response = await fetch(previewImage.src);
+                const blob = await response.blob();
+                const file = new File([blob], 'ai_generated_image.png', { type: 'image/png' });
+                await uploadImage(file);
+                modal.classList.remove('show');
+            });
+
+            cancelBtn.addEventListener('click', () => {
+                modal.classList.remove('show');
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <header class="campaign-header">
+        <h1>Летняя распродажа</h1>
+    </header>
+
+    <div class="back-navigation">
+        <a href="/web/advertisers/dashboard" class="back-link">Назад</a>
+    </div>
+
+    <main class="campaign-container">
+        <div class="stats-section">
+            <div class="stats-card">
+                <h2>Статистика кампании (<span id="campaign-id"></span>)</h2>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">Показы</div>
+                        <div class="stat-value" id="impressions">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Клики</div>
+                        <div class="stat-value" id="clicks">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Конверсия</div>
+                        <div class="stat-value" id="conversion">0%</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Расходы на показы</div>
+                        <div class="stat-value" id="spent-impressions">$0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Расходы на клики</div>
+                        <div class="stat-value" id="spent-clicks">$0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Общие расходы</div>
+                        <div class="stat-value" id="spent-total">$0</div>
+                    </div>
+                </div>
+
+                <div class="daily-stats">
+                    <h2>Ежедневная статистика</h2>
+                    <table class="stats-table">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Показы</th>
+                                <th>Клики</th>
+                                <th>Расходы</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="feedback-stats">
+                    <h2>Отзывы пользователей</h2>
+                    <div class="feedback-summary">
+                        <div class="rating-box">
+                            <div class="rating-label">Средняя оценка</div>
+                            <div class="rating-value" id="average-rating">-</div>
+                        </div>
+                        <div class="rating-box">
+                            <div class="rating-label">Всего оценок</div>
+                            <div class="rating-value" id="total-ratings">0</div>
+                        </div>
+                    </div>
+                    <div class="feedback-list" id="feedback-list">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="details-section">
+            <div class="details-card">
+                <div class="details-header">
+                    <h2>Детали кампании</h2>
+                    <button class="delete-campaign-btn">Удалить кампанию</button>
+                </div>
+                <form id="campaignForm" class="edit-form">
+                    <div class="form-grid">
+                        <div class="detail-item">
+                            <label class="detail-label">Заголовок рекламы</label>
+                            <input type="text" id="edit-title" class="editable-value">
+                        </div>
+                        <div class="detail-item">
+                            <label class="detail-label">Цена за показ ($)</label>
+                            <input type="number" step="0.01" id="edit-cost-per-impression" class="editable-value">
+                        </div>
+                        <div class="detail-item">
+                            <label class="detail-label">Цена за клик ($)</label>
+                            <input type="number" step="0.01" id="edit-cost-per-click" class="editable-value">
+                        </div>
+                        <div class="detail-item">
+                            <label class="detail-label">Пол</label>
+                            <select id="edit-gender" class="editable-value">
+                                <option value="ALL">Все</option>
+                                <option value="MALE">Мужской</option>
+                                <option value="FEMALE">Женский</option>
+                            </select>
+                        </div>
+                        <div class="detail-item">
+                            <label class="detail-label">Возраст от</label>
+                            <input type="number" id="edit-age-from" class="editable-value">
+                        </div>
+                        <div class="detail-item">
+                            <label class="detail-label">Возраст до</label>
+                            <input type="number" id="edit-age-to" class="editable-value">
+                        </div>
+                        <div class="detail-item">
+                            <label class="detail-label">Местоположение</label>
+                            <input type="text" id="edit-location" class="editable-value">
+                        </div>
+                    </div>
+
+                    <div class="detail-item" style="margin-top: 1rem;">
+                        <label class="detail-label">Текст рекламы</label>
+                        <textarea id="edit-text" class="editable-value"></textarea>
+                    </div>
+
+                    <button type="submit" class="edit-button">Сохранить изменения</button>
+                </form>
+
+                <h2>Изображение кампании</h2>
+                <div class="campaign-image">
+                    <div class="upload-placeholder">
+                        Перетащите изображение или нажмите для загрузки
+                    </div>
+                    <img src="" alt="Изображение кампании" style="display: none;">
+                </div>
+                <div class="image-actions">
+                    <label for="imageUpload" class="image-upload-label">
+                        Загрузить изображение
+                    </label>
+                    <input type="file" id="imageUpload" accept="image/*">
+                    <button type="button" class="delete-image-btn" style="display: none;">
+                        Удалить изображение
+                    </button>
+                    <button type="button" class="generate-image-btn">
+                        Сгенерировать с помощью ИИ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="ai-preview-modal">
+        <div class="ai-preview-content">
+            <img class="ai-preview-image" src="" alt="Изображение, сгенерированное ИИ">
+            <div class="ai-preview-actions">
+                <button class="edit-button use-image-btn">Использовать изображение</button>
+                <button class="edit-button cancel-btn">Отмена</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

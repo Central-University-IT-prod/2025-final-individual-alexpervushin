@@ -1,0 +1,103 @@
+test_name: Проверка статистики
+
+stages:
+  - name: 'Создание рекламодателя для тестов'
+    request:
+      url: '{BASE_URL}/advertisers/bulk'
+      method: POST
+      json:
+        - !include components/advertisers/advertiser1.yml
+    response:
+      status_code: 201
+
+  - name: 'Создание кампании для тестов'
+    request:
+      url: '{BASE_URL}/advertisers/e14e523e-7bc0-4340-b096-22b669b49a20/campaigns'
+      method: POST
+      json: !include components/campaigns/campaign1.yml
+    response:
+      status_code: 201
+      save:
+        json:
+          test_campaign_id: campaign_id
+
+  - name: 'Получение статистики по кампании'
+    request:
+      url: '{BASE_URL}/stats/campaigns/{test_campaign_id}'
+      method: GET
+    response:
+      status_code: 200
+      json:
+        impressions_count: !anyint
+        clicks_count: !anyint
+        conversion: !anyfloat
+        spent_impressions: !anyfloat
+        spent_clicks: !anyfloat
+        spent_total: !anyfloat
+
+  - name: 'Получение статистики по всем кампаниям рекламодателя'
+    request:
+      url: '{BASE_URL}/stats/advertisers/e14e523e-7bc0-4340-b096-22b669b49a20/campaigns'
+      method: GET
+    response:
+      status_code: 200
+      json:
+        impressions_count: !anyint
+        clicks_count: !anyint
+        conversion: !anyfloat
+        spent_impressions: !anyfloat
+        spent_clicks: !anyfloat
+        spent_total: !anyfloat
+
+  - name: 'Получение ежедневной статистики по кампании'
+    request:
+      url: '{BASE_URL}/stats/campaigns/{test_campaign_id}/daily'
+      method: GET
+    response:
+      status_code: 200
+      json:
+        - impressions_count: !anyint
+          clicks_count: !anyint
+          conversion: !anyfloat
+          spent_impressions: !anyfloat
+          spent_clicks: !anyfloat
+          spent_total: !anyfloat
+          date: !anyint
+
+  - name: 'Получение ежедневной статистики по всем кампаниям рекламодателя'
+    request:
+      url: '{BASE_URL}/stats/advertisers/e14e523e-7bc0-4340-b096-22b669b49a20/campaigns/daily'
+      method: GET
+    response:
+      status_code: 200
+      json:
+        - impressions_count: !anyint
+          clicks_count: !anyint
+          conversion: !anyfloat
+          spent_impressions: !anyfloat
+          spent_clicks: !anyfloat
+          spent_total: !anyfloat
+          date: !anyint
+
+  - name: 'Получение статистики по клиентам'
+    request:
+      url: '{BASE_URL}/stats/clients'
+      method: GET
+    response:
+      status_code: 200
+      json:
+        total_clients: !anyint
+        demographics_distribution: !anydict
+        top_locations: !anylist
+        average_age: !anyfloat
+
+  - name: 'Получение статистики по отзывам о кампании'
+    request:
+      url: '{BASE_URL}/stats/campaigns/{test_campaign_id}/feedback'
+      method: GET
+    response:
+      status_code: 200
+      json:
+        average_rating: !anyfloat
+        total_ratings: !anyint
+        feedbacks: !anylist 

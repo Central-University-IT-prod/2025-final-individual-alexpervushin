@@ -1,0 +1,57 @@
+test_name: Создание клиентов
+
+stages:
+  - name: 'Создание клиентов №1, №2, №3, №4, №5'
+    request:
+      url: '{BASE_URL}/clients/bulk'
+      method: POST
+      json:
+        - !include components/clients/client1.yml
+        - !include components/clients/client2.yml
+        - !include components/clients/client3.yml
+        - !include components/clients/client4.yml
+        - !include components/clients/client5.yml
+    response:
+      status_code: 201
+      json:
+        - !include components/clients/client1.yml
+        - !include components/clients/client2.yml
+        - !include components/clients/client3.yml
+        - !include components/clients/client4.yml
+        - !include components/clients/client5.yml
+
+  - name: 'Получение клиента №2'
+    request:
+      url: '{BASE_URL}/clients/8f842e24-a139-4e04-b8a3-486bae305d90'
+      method: GET
+    response:
+      status_code: 200
+      json: !include components/clients/client2.yml
+
+  - name: 'Получение клиента №3'
+    request:
+      url: '{BASE_URL}/clients/cc6ebe5d-54a2-44e0-b11d-6b38c9f4d6c1'
+      method: GET
+    response:
+      status_code: 200
+      json: !include components/clients/client3.yml
+
+  - name: 'Получение несуществующего клиента'
+    request:
+      url: '{BASE_URL}/clients/00000000-0000-0000-0000-000000000000'
+      method: GET
+    response:
+      status_code: 404
+
+  - name: 'Создание клиента с некорректными данными'
+    request:
+      url: '{BASE_URL}/clients/bulk'
+      method: POST
+      json:
+        - client_id: "invalid-uuid"
+          login: ""
+          age: -1
+          location: ""
+          gender: "INVALID"
+    response:
+      status_code: 422

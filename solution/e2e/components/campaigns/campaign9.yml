@@ -1,0 +1,12 @@
+cost_per_impression: 34.7
+cost_per_click: 56.8
+ad_title: Пятёрочка - магазин у дома
+ad_text: Выгодные цены каждый день! Скидки по карте лояльности и персональные предложения.
+targeting:
+  location: Красная площадь
+  age_from: 25
+  gender: ALL
+impressions_limit: 24
+clicks_limit: 12
+start_date: 0
+end_date: 7 

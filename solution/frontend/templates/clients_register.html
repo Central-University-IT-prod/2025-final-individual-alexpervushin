@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация клиента</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .gender-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .gender-option {
+            display: none;
+        }
+
+        .gender-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 25px;
+            background-color: transparent;
+            border: 2px solid #FFD700;
+            border-radius: 10px;
+            color: #FFD700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 130px;
+            text-align: center;
+            gap: 10px;
+        }
+
+        .gender-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .gender-option:checked+.gender-label {
+            background-color: #FFD700;
+            color: #004d40;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .gender-label:hover {
+            background-color: rgba(255, 215, 0, 0.1);
+            transform: scale(1.02);
+        }
+
+        .gender-title {
+            color: #FFD700;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .gender-label:active {
+            animation: pulse 0.3s ease-in-out;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="lottie-container">
+        <img src="/images/Picture2.png" alt="Lottie character" class="lottie-character">
+        <div class="hint-text">погладь меня</div>
+        <div class="prod-text">PROD</div>
+    </div>
+    <div class="welcome-container">
+        <h1>Регистрация клиента</h1>
+        <form class="login-form" onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <input type="text" id="login" name="login" placeholder="Введите логин" required>
+            </div>
+            <div class="form-group">
+                <input type="number" id="age" name="age" placeholder="Введите возраст" min="1" required>
+            </div>
+            <div class="form-group">
+                <input type="text" id="location" name="location" placeholder="Введите локацию (город/регион)" required>
+            </div>
+            <div class="gender-title">Пол</div>
+            <div class="gender-group">
+                <input type="radio" id="male" name="gender" value="MALE" class="gender-option" required>
+                <label for="male" class="gender-label">
+                    <i class="fas fa-mars gender-icon"></i>
+                    Мужской
+                </label>
+
+                <input type="radio" id="female" name="gender" value="FEMALE" class="gender-option">
+                <label for="female" class="gender-label">
+                    <i class="fas fa-venus gender-icon"></i>
+                    Женский
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+            <a href="/web/clients/index" class="back-link">Назад</a>
+        </form>
+    </div>
+
+    <script>
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0,
+                    v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+
+            const login = document.getElementById('login').value;
+            const age = parseInt(document.getElementById('age').value);
+            const location = document.getElementById('location').value;
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            const uuid = generateUUID();
+
+            try {
+                const response = await fetch('/clients/bulk', {
+                    method: 'POST',
+                    headers: {
+                        'accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify([{
+                        client_id: uuid,
+                        login: login,
+                        age: age,
+                        location: location,
+                        gender: gender
+                    }])
+                });
+
+                if (response.ok) {
+                    localStorage.setItem('client_id', uuid);
+                    window.location.href = '/web/clients/dashboard';
+                } else {
+                    alert('Ошибка при регистрации. Пожалуйста, попробуйте снова.');
+                }
+            } catch (error) {
+                console.error('Ошибка при регистрации:', error);
+                alert('Произошла ошибка при регистрации. Пожалуйста, попробуйте снова.');
+            }
+        }
+    </script>
+</body>
+
+</html>
